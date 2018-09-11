@@ -40,7 +40,7 @@ curl -L https://git.io/getLatestIstio | sh -
 cd $(ls | grep istio)
 sudo mv bin/istioctl /usr/local/bin/
 
-kubectl delete --ignore-not-found=true -f install/kubernetes/istio.yaml
+kubectl delete --ignore-not-found=true -f install/kubernetes/istio-demo.yaml
 kubectl delete --ignore-not-found=true -f install/kubernetes/addons
 kubectl delete istioconfigs --all
 kubectl delete thirdpartyresource istio-config.istio.io
@@ -58,7 +58,11 @@ do
     kuber=$(kubectl get pods | grep Terminating)
 done
 
-kubectl apply -f install/kubernetes/istio.yaml
+kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
+
+# Wait for kubernetes to register the resources
+sleep 10
+kubectl apply -f install/kubernetes/istio-demo.yaml
 
 PODS=$(kubectl get pods | grep istio | grep Pending)
 while [ ${#PODS} -ne 0 ]
@@ -126,7 +130,7 @@ done
 
 echo "Everything looks good."
 echo "Cleaning up..."
-kubectl delete -f install/kubernetes/istio.yaml
+kubectl delete -f install/kubernetes/istio-demo.yaml
 kubectl delete --ignore-not-found=true -f install/kubernetes/addons
 kubectl delete istioconfigs --all
 kubectl delete thirdpartyresource istio-config.istio.io
