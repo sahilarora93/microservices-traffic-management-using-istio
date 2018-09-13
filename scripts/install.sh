@@ -114,6 +114,8 @@ export GATEWAY_URL=$(bx cs workers $CLUSTER_NAME | grep normal | awk '{print $2}
 HEALTH=$(curl -o /dev/null -s -w "%{http_code}\n" http://$GATEWAY_URL/productpage)
 
 TRIES=0
+echo "Using url: $GATEWAY_URL"
+sleep 5s
 while [ $HEALTH -ne 200 ]
 do
     TRIES=$((TRIES+1))
